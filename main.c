@@ -6,9 +6,11 @@ int main(int argc, char *argv[])
 {
     srand(time(NULL));
 
-    int num = 10000;
     int result = 0;
     double average = 0;
+
+    int num = 10000;
+    verbose = 0;
 
     char c;
     while ((c = getopt (argc, argv, "n:v:")) != -1)
@@ -23,6 +25,8 @@ int main(int argc, char *argv[])
                 break;
         }
 
+    FILE *fp = fopen("data.txt", "w");
+
     for (int i = 0; i < num; i++)
     {
         if (verbose)
@@ -33,8 +37,13 @@ int main(int argc, char *argv[])
         if (verbose)
             printf("#%d handoff : %d\n", i + 1, result);
         
+        fprintf(fp, "%d\n", result);
+
         average += (double)result / num;
     }
+    
+    fclose(fp);
+
     printf("average handoff : %lf\n", average);
 
     return 0;
