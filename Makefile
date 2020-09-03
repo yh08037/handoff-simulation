@@ -1,9 +1,5 @@
-CFLAGS = -O
-CC = gcc
-SRC = main.c handoff_simulator.c
-OBJ = $(SRC:.c = .o)
+all::
+	gcc main.c -o handoff_simulator handoff_simulator.h -lm
 
-handoff_simulator: $(OBJ)
-	$(CC) $(CFLAGS) -o NumTest $(OBJ)
-clean:
-	rm -f core *.o 
+clean::
+	rm ./handoff_simulator
