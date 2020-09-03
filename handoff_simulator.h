@@ -9,12 +9,6 @@
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 
-#define SIZE_CELL 0.5           // kilometer
-#define AVG_DURATION (1.0 / 30) // hour
-#define AVG_DISTANCE 0.1        // kilometer
-
-int verbose = 0;
-
 typedef struct _Point
 {
     double x; // kilometer
@@ -28,15 +22,26 @@ typedef struct _Node
     int handoff;     // count
 } Node;
 
-Point vertex[6] = {{SIZE_CELL * SQRT3 / 2.0, -SIZE_CELL / 2.0},
-                   {SIZE_CELL * SQRT3 / 2.0, SIZE_CELL / 2.0},
-                   {0, SIZE_CELL},
-                   {-SIZE_CELL * SQRT3 / 2.0, SIZE_CELL / 2.0},
-                   {-SIZE_CELL * SQRT3 / 2.0, -SIZE_CELL / 2.0},
-                   {0, -SIZE_CELL}};
+double size_cell = 0.5;         // kilometer
+double avg_speed = 4.0;         // km/h
+double avg_distance = 0.1;      // kilometer
+double avg_duration = 2.0 / 60; // hour
+int verbose = 0;
+
+Point vertex[6] = {{SQRT3 / 2.0, -1 / 2.0},
+                   {SQRT3 / 2.0, 1 / 2.0},
+                   {0, 1},
+                   {-SQRT3 / 2.0, 1 / 2.0},
+                   {-SQRT3 / 2.0, -1 / 2.0},
+                   {0, -1}};
 
 
 ////////////////////////////// declarations //////////////////////////////
+
+void reset_param();
+
+void init_vertex();
+void reset_vertex();
 
 void swap(double *a, double *b);
 double standard_uniform();
@@ -63,6 +68,33 @@ int simulate();
 
 
 ////////////////////////////// definitions //////////////////////////////
+
+void reset_param()
+{
+    size_cell = 0.5;         
+    avg_speed = 4.0;         
+    avg_distance = 0.1;      
+    avg_duration = 2.0 / 60; 
+    verbose = 0;
+}
+
+void init_vertex()
+{
+    for (int i = 0; i < 6; i++)
+    {
+        (vertex+i)->x *= size_cell;
+        (vertex+i)->y *= size_cell;
+    }
+}
+
+void reset_vertex()
+{
+for (int i = 0; i < 6; i++)
+    {
+        (vertex+i)->x /= size_cell;
+        (vertex+i)->y /= size_cell;
+    }
+}
 
 void swap(double *a, double *b)
 {
@@ -95,15 +127,15 @@ int in_cell(Node *node)
 {
     int result = 1;
 
-    if (node->point.x > SIZE_CELL * SQRT3 / 2.0 || node->point.x < -SIZE_CELL * SQRT3 / 2.0)
+    if (node->point.x > size_cell * SQRT3 / 2.0 || node->point.x < -size_cell * SQRT3 / 2.0)
         result = 0;
-    else if (node->point.x / SQRT3 + node->point.y > SIZE_CELL)
+    else if (node->point.x / SQRT3 + node->point.y > size_cell)
         result = 0;
-    else if (-node->point.x / SQRT3 + node->point.y > SIZE_CELL)
+    else if (-node->point.x / SQRT3 + node->point.y > size_cell)
         result = 0;
-    else if (node->point.x / SQRT3 + node->point.y < -SIZE_CELL)
+    else if (node->point.x / SQRT3 + node->point.y < -size_cell)
         result = 0;
-    else if (-node->point.x / SQRT3 + node->point.y < -SIZE_CELL)
+    else if (-node->point.x / SQRT3 + node->point.y < -size_cell)
         result = 0;
 
     return result;
@@ -134,15 +166,15 @@ void init_node(Node *node)
 {
     while (1)
     {
-        node->point.x = uniform(-SIZE_CELL * SQRT3 / 2.0, SIZE_CELL * SQRT3 / 2.0);
-        node->point.y = uniform(-SIZE_CELL, SIZE_CELL);
+        node->point.x = uniform(-size_cell * SQRT3 / 2.0, size_cell * SQRT3 / 2.0);
+        node->point.y = uniform(-size_cell, size_cell);
 
         if (in_cell(node))
             break;
     }
 
     // average call duration : 2 min = 1/30 hour
-    node->duration = exponential(1.0 / AVG_DURATION);
+    node->duration = exponential(1.0 / avg_duration);
     node->handoff = 0;
 }
 
@@ -258,27 +290,27 @@ void count_handoff(Node *node, Node *newnode)
 
 Node *move_node(Node *node)
 {
-    double velocity = uniform(2, 6);                   // [2km/h, 6km/h]
+    double speed = uniform(avg_speed-2, avg_speed+2);  // [2km/h, 6km/h]
     double direction = uniform(0, 2 * M_PI);           // [0, 2pi]
-    double distance = exponential(1.0 / AVG_DISTANCE); // average distance : 100 m
+    double distance = exponential(1.0 / avg_distance); // average distance : 100 m
     
     Node *newnode = create_node();  
 
     if (verbose)
     {
         printf("distance generated : %lf\n", distance * 1000);
-        printf("time taking : %lf\n", distance / velocity * 60);
+        printf("time taking : %lf\n", distance / speed * 60);
     }
 
-    if (distance > node->duration * velocity)
+    if (distance > node->duration * speed)
     {   
         if (verbose)
             printf("call duration time out\n");
-        distance = node->duration * velocity;
+        distance = node->duration * speed;
         newnode->duration = 0;
     }
     else
-        newnode->duration - distance / velocity;
+        newnode->duration - distance / speed;
 
     newnode->point.x = node->point.x + distance * cos(direction);
     newnode->point.y = node->point.y + distance * sin(direction);
@@ -295,7 +327,8 @@ int simulate()
 {
     int result = 0;
     Node *node = create_node();
-
+    
+    init_vertex();
     init_node(node);
 
     if (verbose)
@@ -317,6 +350,7 @@ int simulate()
 
     result = node->handoff;
 
+    reset_vertex();
     destroy_node(node);
 
     return result;

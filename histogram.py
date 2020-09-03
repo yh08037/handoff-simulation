@@ -23,5 +23,5 @@ for i in range(len(counts)):
              s=str(counts[i]), 
              horizontalalignment='center')
 
-plt.title('histogram of handoff')
+plt.title('histogram of handoff : %d' %(len(handoff)))
 plt.show()

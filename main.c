@@ -2,49 +2,74 @@
 #include <unistd.h>
 #include <string.h>
 
+int num = 10000;
+
+void run(FILE *fp, char c, double val) {
+
+    switch (c){
+        case 'r': // meter->kilometer
+            size_cell = val / 1000;
+            fprintf(fp, "%lf,", size_cell);
+            break;
+        case 's': // km/h
+            avg_speed = val;
+            fprintf(fp, "%lf,", avg_speed);
+            break;
+        case 'd': // meter->kilometer
+            avg_distance = val / 1000;
+            fprintf(fp, "%lf,", avg_distance);
+            break;
+        case 't': // minute->hour
+            avg_duration = val / 60;
+            fprintf(fp, "%lf,", avg_duration);
+            break;
+        default:
+            break;
+    }
+    
+    int result = 0;
+    double average = 0;
+
+    for (int i = 0; i < num; i++)
+    {
+        result = simulate();
+        average += (double)result / num;
+    }
+
+    fprintf(fp, "%lf\n", average);
+    reset_param();
+}
+
+
 int main(int argc, char *argv[])
 {
     srand(time(NULL));
 
-    int result = 0;
-    double average = 0;
-
-    int num = 10000;
-    verbose = 0;
-
-    char c;
-    while ((c = getopt (argc, argv, "n:v:")) != -1)
-        switch (c){
-            case 'n':
-                num = atoi(strdup(optarg));
-                break;
-            case 'v':
-                verbose = atoi(strdup(optarg));
-                break;
-            default:
-                break;
-        }
-
-    FILE *fp = fopen("data.txt", "w");
-
-    for (int i = 0; i < num; i++)
-    {
-        if (verbose)
-            printf("\n\n#################### start %d ####################\n", i + 1);
-
-        result = simulate();
-        
-        if (verbose)
-            printf("#%d handoff : %d\n", i + 1, result);
-        
-        fprintf(fp, "%d\n", result);
-
-        average += (double)result / num;
-    }
+    FILE *fp;
     
+    fp = fopen("data_r.txt", "w");
+    fprintf(fp, "size_cell,handoff\n");;
+    for (double i = 100; i <= 1000; i += 10) 
+        run(fp, 'r', i);
     fclose(fp);
 
-    printf("average handoff : %lf\n", average);
+    fp = fopen("data_s.txt", "w");
+    fprintf(fp, "avg_speed,handoff\n");;
+    for (double i = 2; i <= 10; i += 0.1) 
+        run(fp, 's', i);
+    fclose(fp);
+
+    fp = fopen("data_d.txt", "w");
+    fprintf(fp, "avg_distance,handoff\n");;
+    for (double i = 10; i <= 200; i += 1) 
+        run(fp, 'd', i);
+    fclose(fp);
+
+    fp = fopen("data_t.txt", "w");
+    fprintf(fp, "avg_duration,handoff\n");;
+    for (double i = 0.1; i <= 20; i += 0.1) 
+        run(fp, 't', i);
+    fclose(fp);
 
     return 0;
 }
