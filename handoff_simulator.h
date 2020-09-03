@@ -223,15 +223,14 @@ void shift_node(Node *node, Node *newnode, int segment)
 
     newnode->point.x -= dx;
     newnode->point.y -= dy;
+
+    newnode->handoff++;
 }
 
 void count_handoff(Node *node, Node *newnode)
 {
     int segment = -1;
 
-    // TODO : infinite loop
-    // this while loop runs infinite
-    // when randomly generated distance is infinite
     while (!in_cell(newnode))
     {
         if (verbose)
@@ -254,8 +253,6 @@ void count_handoff(Node *node, Node *newnode)
             print_point(newnode->point);
             printf("\n");
         }
-
-        newnode->handoff++;
     }
 }
 
@@ -264,21 +261,29 @@ Node *move_node(Node *node)
     double velocity = uniform(2, 6);                   // [2km/h, 6km/h]
     double direction = uniform(0, 2 * M_PI);           // [0, 2pi]
     double distance = exponential(1.0 / AVG_DISTANCE); // average distance : 100 m
-
-    Node *newnode = create_node();
-
-    newnode->point.x = node->point.x + distance * cos(direction);
-    newnode->point.y = node->point.y + distance * sin(direction);
-
-    // TODO : process related with call duration
-    newnode->duration = node->duration - distance / velocity;
-    newnode->handoff = node->handoff;
+    
+    Node *newnode = create_node();  
 
     if (verbose)
     {
-        printf("distance generated : %lf\n", distance);
-        printf("time taking : %lf\n", distance / velocity);
+        printf("distance generated : %lf\n", distance * 1000);
+        printf("time taking : %lf\n", distance / velocity * 60);
     }
+
+    if (distance > node->duration * velocity)
+    {   
+        if (verbose)
+            printf("call duration time out\n");
+        distance = node->duration * velocity;
+        newnode->duration = 0;
+    }
+    else
+        newnode->duration - distance / velocity;
+
+    newnode->point.x = node->point.x + distance * cos(direction);
+    newnode->point.y = node->point.y + distance * sin(direction);
+    newnode->handoff = node->handoff;
+
 
     count_handoff(node, newnode);
 

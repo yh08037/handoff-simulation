@@ -1,21 +1,38 @@
 #include "handoff_simulator.h"
+#include <unistd.h>
+#include <string.h>
 
 int main(int argc, char *argv[])
 {
     srand(time(NULL));
 
-    int num = 1000000;
+    int num = 10000;
     int result = 0;
     double average = 0;
 
-    // verbose = 1;
+    char c;
+    while ((c = getopt (argc, argv, "n:v:")) != -1)
+        switch (c){
+            case 'n':
+                num = atoi(strdup(optarg));
+                break;
+            case 'v':
+                verbose = atoi(strdup(optarg));
+                break;
+            default:
+                break;
+        }
 
     for (int i = 0; i < num; i++)
     {
         if (verbose)
             printf("\n\n#################### start %d ####################\n", i + 1);
+
         result = simulate();
-        printf("#%d handoff : %d\n", i + 1, result);
+        
+        if (verbose)
+            printf("#%d handoff : %d\n", i + 1, result);
+        
         average += (double)result / num;
     }
     printf("average handoff : %lf\n", average);
