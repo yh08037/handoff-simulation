@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 
     fp = fopen("data_d.txt", "w");
     fprintf(fp, "avg_distance,handoff\n");;
-    for (double i = 10; i <= 200; i += 1) 
+    for (double i = 10; i <= 1500; i += 10) 
         run(fp, 'd', i);
     fclose(fp);
 
