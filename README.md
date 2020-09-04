@@ -10,7 +10,9 @@
 - Ubuntu 18.04
 - gcc 7.5.0
 - Python 3.6.9
-
+- numpy 1.19.1
+- pandas 1.1.1
+- matplotlib 3.3.1
 
 ## Execution
 ```
