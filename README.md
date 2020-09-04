@@ -6,7 +6,7 @@
 ![result](./images/result.png)
 
 
-## Test environment
+## Requirements
 - Ubuntu 18.04
 - gcc 7.5.0
 - Python 3.6.9
