@@ -21,12 +21,12 @@ ax.bar(range(len(counts)), counts, width=1, align='center', edgecolor='black')
 ax.set(xticks=range(len(counts)), xlim=[-1, len(counts)])
 
 for i in range(len(counts)):
-    plt.text(x=i, 
-             y=counts[i] + max(counts)/100, 
-             s=str(counts[i]), 
+    plt.text(x=i,
+             y=counts[i] + max(counts)/100,
+             s=str(counts[i]),
              horizontalalignment='center')
 
-plt.title('histogram of handoff : %d' %(len(data['handoff'])))
+plt.title('histogram of handoff : %d' % (len(data['handoff'])))
 
 
 # plot corelation
