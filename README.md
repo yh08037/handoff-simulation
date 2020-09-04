@@ -30,7 +30,7 @@ make test
 python3 histogram.py
 ```
 
-### Option parametes
+### Option parameters
 ```
 -n : number of iteration
   10000 - default
