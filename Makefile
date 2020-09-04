@@ -6,6 +6,7 @@ test::
 
 clean::
 	rm ./simulator
+	rm ./data.txt
 	rm ./data_d.txt
 	rm ./data_r.txt
 	rm ./data_s.txt

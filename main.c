@@ -34,9 +34,14 @@ void run(FILE *fp, char c, double val) {
     {
         result = simulate();
         average += (double)result / num;
+        
+        if (c == 'h')
+            fprintf(fp, "%d\n", result);
     }
 
-    fprintf(fp, "%lf\n", average);
+    if (c != 'h')
+        fprintf(fp, "%lf\n", average);
+
     reset_param();
 }
 
@@ -46,27 +51,32 @@ int main(int argc, char *argv[])
     srand(time(NULL));
 
     FILE *fp;
+
+    fp = fopen("data.txt", "w");
+    fprintf(fp, "handoff\n");
+    run(fp, 'h', 0);
+    fclose(fp);
     
     fp = fopen("data_r.txt", "w");
-    fprintf(fp, "size_cell,handoff\n");;
+    fprintf(fp, "size_cell,handoff\n");
     for (double i = 100; i <= 1000; i += 10) 
         run(fp, 'r', i);
     fclose(fp);
 
     fp = fopen("data_s.txt", "w");
-    fprintf(fp, "avg_speed,handoff\n");;
+    fprintf(fp, "avg_speed,handoff\n");
     for (double i = 2; i <= 10; i += 0.1) 
         run(fp, 's', i);
     fclose(fp);
 
     fp = fopen("data_d.txt", "w");
-    fprintf(fp, "avg_distance,handoff\n");;
+    fprintf(fp, "avg_distance,handoff\n");
     for (double i = 10; i <= 1500; i += 10) 
         run(fp, 'd', i);
     fclose(fp);
 
     fp = fopen("data_t.txt", "w");
-    fprintf(fp, "avg_duration,handoff\n");;
+    fprintf(fp, "avg_duration,handoff\n");
     for (double i = 0.1; i <= 20; i += 0.1) 
         run(fp, 't', i);
     fclose(fp);

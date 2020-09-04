@@ -41,6 +41,8 @@ int main(int argc, char *argv[])
     int result = 0;
     double average = 0;
 
+    fprintf(fp, "handoff\n");
+
     for (int i = 0; i < num; i++)
     {
         if (verbose)
