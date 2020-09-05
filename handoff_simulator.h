@@ -42,7 +42,6 @@ void reset_param();
 void init_vertex();
 void reset_vertex();
 
-void swap(double *a, double *b);
 double standard_uniform();
 double uniform(double a, double b);
 double exponential(double lambda);
@@ -87,19 +86,13 @@ void init_vertex()
 
 void reset_vertex()
 {
-    for (int i = 0; i < 6; i++)
-    {
-        (vertex + i)->x /= size_cell;
-        (vertex + i)->y /= size_cell;
-    }
-}
-
-void swap(double *a, double *b)
-{
-    double *tmp;
-    tmp = a;
-    a = b;
-    b = tmp;
+    (vertex + 0)->x = (vertex + 1)->x = SQRT3 / 2.0;
+    (vertex + 0)->y = (vertex + 4)->y = -1 / 2.0;
+    (vertex + 1)->y = (vertex + 3)->y = 1 / 2.0;
+    (vertex + 2)->x = (vertex + 5)->x = 0;
+    (vertex + 2)->y = 1;
+    (vertex + 3)->x = (vertex + 4)->x = -SQRT3 / 2.0;
+    (vertex + 5)->y = -1;
 }
 
 double standard_uniform()
@@ -109,9 +102,7 @@ double standard_uniform()
 
 double uniform(double a, double b)
 {
-    if (a > b)
-        swap(&a, &b);
-
+    // b must be larger than a!!
     return standard_uniform() * (b - a) + a;
 }
 
@@ -123,20 +114,14 @@ double exponential(double lambda)
 
 int in_cell(Node *node)
 {
-    int result = 1;
+    if (fabs(node->point.x) > size_cell * SQRT3 / 2.0)
+        return 0;
+    else if (fabs(node->point.x / SQRT3 + node->point.y) > size_cell)
+        return 0;
+    else if (fabs(-node->point.x / SQRT3 + node->point.y) > size_cell)
+        return 0;
 
-    if (node->point.x > size_cell * SQRT3 / 2.0 || node->point.x < -size_cell * SQRT3 / 2.0)
-        result = 0;
-    else if (node->point.x / SQRT3 + node->point.y > size_cell)
-        result = 0;
-    else if (-node->point.x / SQRT3 + node->point.y > size_cell)
-        result = 0;
-    else if (node->point.x / SQRT3 + node->point.y < -size_cell)
-        result = 0;
-    else if (-node->point.x / SQRT3 + node->point.y < -size_cell)
-        result = 0;
-
-    return result;
+    return 1;
 }
 
 void print_point(Point point)
