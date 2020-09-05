@@ -238,8 +238,6 @@ void shift_node(Node *node, Node *newnode, int segment)
 
     newnode->point.x -= dx;
     newnode->point.y -= dy;
-
-    newnode->handoff++;
 }
 
 void count_handoff(Node *node, Node *newnode)
@@ -261,6 +259,8 @@ void count_handoff(Node *node, Node *newnode)
             printf("adjacent segment : %d\n", segment);
 
         shift_node(node, newnode, segment);
+
+        newnode->handoff++;
 
         if (verbose)
         {
