@@ -57,7 +57,7 @@
 
 #### 3-1. 알고리즘
 
- 이동단말이 육각형 셀로 이루어져있는 2차원 공간에서 이동할 때, 핸드오프가 일어나 단말과 연결된 기지국이 변경되는 과정을 그대로 모사하고자 하였다. 알고리즘을 단계별로 구분하여 탑-다운 방식으로 작성하였다. 먼저 전체 시뮬레이션의 기본 수행 단위가 되는 1개의 호에 대한 핸드오프 횟수를 구하는 알고리즘은 다음과 같이 여러 단계로 단순하게 나타낼 수 있다. 
+ 이동단말이 육각형 셀로 이루어져있는 2차원 공간에서 이동할 때, 핸드오프가 일어나 단말과 연결된 기지국이 변경되는 과정을 그대로 모사하고자 하였다. 알고리즘을 단계별로 구분하여 탑-다운 방식으로 작성하였다. 전체 시뮬레이션의 기본 수행 단위가 되는 1개의 호에 대한 핸드오프 횟수를 구하는 알고리즘은 다음과 같이 여러 단계로 단순하게 나타낼 수 있다. 
 
 
 
@@ -69,16 +69,16 @@ ___
 ---
 
 ```
-algorithm simulation
-	initialize position of node with uniform distribution
-	initialize call duration of node with exponential distribution
-	
-    while call duration > time taken
-    	move node to next position
-    end
-    
-    return handoff count of node
-end	
+1	algorithm simulation
+2		initialize position of node with uniform distribution
+3		initialize call duration of node with exponential distribution
+4	
+5	    while call duration > time taken
+6  	 	 	move node to next position
+7    	end
+8    
+9  		return handoff count of node
+10	end	
 ```
 
 ---
@@ -94,23 +94,21 @@ ___
 ---
 
 ```
-algorithm move_node
-	generate speed with uniform distribution
-	generate direction with uniform distribution
-	generate distance with exponential distribution
-	
-	distance = min(distance, time left * speed)
-	
-	calculate next position with direction and distance	
-	count number of handoff while moving to next positon
-end
+1	algorithm move_node
+2		generate speed with uniform distribution
+3		generate direction with uniform distribution
+4		generate distance with exponential distribution
+5	
+6		distance = min(distance, time left * speed)
+7	
+8		calculate next position with direction and distance	
+9		count number of handoff while moving to next positon
+10	end
 ```
 
 ---
 
- 이동 단말을 이동시키기 위해 이동 속력과 이동 방향, 이동 거리를 생성한다. 이동단말의 속력과 방향은 균일 분포를 따르고, 거리는 지수 분포를 따른다. 이때 생성된 이동 거리가 남은 시간동안 갈 수 있는 거리보다 멀다면 거리를 남은 시간동안 갈 수 있는 거리로 변경한다. 다음으로 생성한 거리와 방향을 통해 다음 위치를 계산하고, 이동단말이 다음 위치로 이동하는 동안 발생하는 핸드오프의 횟수를 구한다.
-
-
+ Algorithm 1의 6행에 해당하는 알고리즘이다. 이동 단말을 이동시키기 위해 이동 속력과 이동 방향, 이동 거리를 생성한다. 이동단말의 속력과 방향은 균일 분포를 따르고, 거리는 지수 분포를 따른다. 이때 생성된 이동 거리가 남은 시간동안 갈 수 있는 거리보다 멀다면 거리를 남은 시간동안 갈 수 있는 거리로 변경한다. 다음으로 생성한 거리와 방향을 통해 다음 위치를 계산하고, 이동단말이 다음 위치로 이동하는 동안 발생하는 핸드오프의 횟수를 구한다.
 
 
 
@@ -131,18 +129,18 @@ ___
 ---
 
 ```
-algorithm count_handoff
-	while next position is not in current cell
-		choose segment of hexagonal cell that intersects path of node to next position
-		switch base station to adjacent hexagonal cell that shares the segment
-		increase number of handoff by 1
-	end
-end
+1	algorithm count_handoff
+2		while next position is not in current cell
+3			choose segment of hexagonal cell that intersects path of node to next position
+4			switch base station to adjacent hexagonal cell that shares the segment
+5			increase number of handoff by 1
+6		end
+7	end
 ```
 
 ---
 
- 이동단말이 다음 위치로 이동하는 경로와 교차하는 셀의 선분을 결정하고, 그 선분을 공유하고 있는 인접한 육각형 셀로 기지국을 변경한다. 이때 핸드오프가 발생하는 것이므로 핸드오프 횟수를 1 증가시킨다.
+ Algorithm 2의 9행에 해당하는 알고리즘이다. 이동단말이 다음 위치로 이동하는 경로와 교차하는 셀의 선분을 결정하고, 그 선분을 공유하고 있는 인접한 육각형 셀로 기지국을 변경한다. 이때 핸드오프가 발생하는 것이므로 핸드오프 횟수를 1 증가시킨다. 이동단말의 다음 위치가 현재 셀 내부에 포함될 때까지 이 과정을 반복한다.
 
 
 
@@ -153,22 +151,22 @@ ___
 ---
 
 ```
-algorithm choose_segment
-	for all segment on hexagonal cell
-		if segment was chosen in the past
-			continue
-		end
-		
-		if segment intersects path of node to next position
-			return segment
-        end
-	end
-end
+1	algorithm choose_segment
+2		for all segment on hexagonal cell
+3			if segment was chosen in the past
+4	 			continue
+5	 		end
+6		
+7	 		if segment intersects path of node to next position
+8	 			return segment
+9	        end
+10		end
+11	end
 ```
 
 ---
 
- 육각형 셀의 모든 선분에 대해 단말의 이동경로와 교차하는지 확인한다. 이때 첫번째 핸드오프가 일어난 이후의 셀에서는 단말의 이동경로와 육각형 셀 선분의 교차가 두번 발생할 수 있다. 둘 중 하나는 단말을 넘겨준 셀과 공유하는 선분이며, 다른 하나는 단말을 넘겨줄 셀과 공유하는 선분이다. 따라서 선분을 결정할 때, 전자를 무시하고 후자를 택한다.
+ Algorithm 3의 3행에 해당하는 알고리즘이다. 육각형 셀의 모든 선분에 대해 단말의 이동경로와 교차하는지 확인한다. 이때 첫번째 핸드오프가 일어난 이후의 셀에서는 단말의 이동경로와 육각형 셀 선분의 교차가 두번 발생할 수 있다. 둘 중 하나는 단말을 넘겨준 셀과 공유하는 선분이며, 다른 하나는 단말을 넘겨줄 셀과 공유하는 선분이다. 따라서 선분을 결정할 때, 전자를 무시하고 후자를 택한다.
 
 
 
@@ -179,19 +177,17 @@ ___
 ---
 
 ```
-algorithm shift_node
-	(x1, y1), (x2, y2) = both ends of the chosen segment
-	(dx, dy) = (x1, y1) + (x2, y2)
-	current position = current position - (dx, dy)
-	next position = next position - (dx, dy)
-end
+1	algorithm shift_node
+2		(x1, y1), (x2, y2) = both ends of the chosen segment
+3		(dx, dy) = (x1, y1) + (x2, y2)
+4		current position = current position - (dx, dy)
+5		next position = next position - (dx, dy)
+6	end
 ```
 
 ---
 
- 기지국이 변경된다는 것은 2차원 좌표계의 원점이 다음 셀의 중심으로 재정의된다는 것과 같다. 따라서 원점 즉 현재 기지국의 위치를 기준으로 한 다음 기지국의 위치를 구하고, 이동노드의 현재 위치와 다음 위치에 다음 기지국의 위치를 빼면, 이동노드의 위치가 평행이동하여 원점이 다음 기지국으로 이동한 것과 같게 된다. 다음 기지국의 위치는 선택된 선분의 양 끝 점의 좌표를 더하여 구할 수 있다.
-
-
+ Algorithm 3의 4행에 해당하는 알고리즘이다. 기지국이 변경된다는 것은 2차원 좌표계의 원점이 다음 셀의 중심으로 재정의된다는 것과 같다. 따라서 원점 즉 현재 기지국의 위치를 기준으로 한 다음 기지국의 위치를 구하고, 이동노드의 현재 위치와 다음 위치에 다음 기지국의 위치를 빼면, 이동노드의 위치가 평행이동하여 원점이 다음 기지국으로 이동한 것과 같게 된다. 다음 기지국의 위치는 선택된 선분의 양 끝 점의 좌표를 더하여 구할 수 있다.
 
 
 
@@ -204,6 +200,10 @@ end
 
 
 #### 3-2. 결과
+
+![hist](images/hist.png)
+
+![plot](images/result.png)
 
 
 
