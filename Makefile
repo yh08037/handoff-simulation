@@ -6,12 +6,11 @@ test::
 
 clean::
 	rm ./simulator
-	rm ./data.txt
-	rm ./data_d.txt
-	rm ./data_r.txt
-	rm ./data_s.txt
-	rm ./data_t.txt
+	rm ./*.txt
 
 clean_test::
 	rm ./test
-	rm ./data.txt
+	rm ./*.txt
+
+clean_data::
+	rm ./*.txt

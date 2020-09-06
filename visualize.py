@@ -26,7 +26,13 @@ for i in range(len(counts)):
              s=str(counts[i]),
              horizontalalignment='center')
 
-plt.title('histogram of handoff : %d' % (len(data['handoff'])))
+plt.title('histogram of handoff')
+
+plt.text(x=int(0.5*len(counts)),
+         y=int(0.7*len(data)),
+         s='number of iteration : %d\n' % (len(data))
+           + 'average handoff : %.4f' % (sum(data['handoff'])/len(data)),
+         horizontalalignment='left')
 
 
 # plot corelation

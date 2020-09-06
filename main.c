@@ -58,6 +58,8 @@ int main(int argc, char *argv[])
     run(fp, 'h', 0);
     fclose(fp);
 
+    num = 100000;
+
     fp = fopen("data_r.txt", "w");
     fprintf(fp, "size_cell,handoff\n");
     for (double i = 100; i <= 1000; i += 10)
